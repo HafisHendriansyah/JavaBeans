@@ -35,7 +35,7 @@ import javax.swing.JOptionPane;
  */
 public class HomePageFrame extends javax.swing.JFrame {
 
-    private int idUserLogin;
+    private int idUserLogin; // Menyimpan ID pengguna yang login
     /**
      * Creates new form HomePage
      */
@@ -48,11 +48,12 @@ public class HomePageFrame extends javax.swing.JFrame {
      * @param idUser ID pengguna yang login.
      */
     public HomePageFrame(int idUser) {
-        initComponents();
-        setLocationRelativeTo(null);
-        setResizable(false);
-        this.idUserLogin = idUser;
+        initComponents(); // Inisialisasi komponen GUI
+        setLocationRelativeTo(null); // Letakkan jendela di tengah layar
+        setResizable(false); // Nonaktifkan resize
+        this.idUserLogin = idUser; // Simpan ID pengguna login
         
+        // Tampilkan data dinamis dari database
         tampilkanNamaUser();
         tampilkanPendapatanHariIni();
         tampilkanJumlahPesananHariIni();
@@ -63,6 +64,7 @@ public class HomePageFrame extends javax.swing.JFrame {
      * Menampilkan nama pengguna yang sedang login di label namaUserLabel.
      * Data diambil dari database tabel javabeans_akun berdasarkan id_user.
      */
+    // Menampilkan nama pengguna berdasarkan ID login
     public void tampilkanNamaUser(){
         try{
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javabeans", "root", "");
@@ -183,9 +185,9 @@ public class HomePageFrame extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         namaUserLabel = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
         jLabel15 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Home Page");
@@ -489,6 +491,14 @@ public class HomePageFrame extends javax.swing.JFrame {
         namaUserLabel.setText("jLabel3");
         jPanel2.add(namaUserLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(211, 53, -1, -1));
 
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/javabeansmanagementsystem/images/gambar biji kopi.png"))); // NOI18N
+        jPanel2.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 280, 290, 360));
+
+        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/javabeansmanagementsystem/images/gambar biji kopi.png"))); // NOI18N
+        jPanel2.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, -10, 290, 140));
+
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 0, 698, 632));
+
         jButton4.setBackground(new java.awt.Color(161, 136, 127));
         jButton4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton4.setText("Logout");
@@ -497,15 +507,7 @@ public class HomePageFrame extends javax.swing.JFrame {
                 jButton4ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(524, 589, 97, -1));
-
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/javabeansmanagementsystem/images/gambar biji kopi.png"))); // NOI18N
-        jPanel2.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 280, 290, 360));
-
-        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/javabeansmanagementsystem/images/gambar biji kopi.png"))); // NOI18N
-        jPanel2.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, -10, 290, 140));
-
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 0, 698, 632));
+        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 560, 97, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

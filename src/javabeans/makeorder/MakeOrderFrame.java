@@ -421,6 +421,7 @@ public class MakeOrderFrame extends javax.swing.JFrame {
         getContentPane().add(jPanel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 130, 480, 470));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     
     /**

@@ -163,28 +163,46 @@ public class MenuCardAdmin extends javax.swing.JPanel {
     /**
      * Event handler untuk tombol Delete.
      * Menghapus data menu dari database dan menjalankan refreshCallback.
-     * 
+     * jika menu pada hari itu pernah dipesan maka menu tidak bisa di delete, harus menunggu hari besok ketika tidak ada transaksi sama sekali.
      * @param evt event klik tombol delete
      */
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this?");
-        if (confirm == JOptionPane.YES_OPTION){
-            try {
-                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javabeans", "root", "");
-                String query = "DELETE FROM javabeans_menu WHERE id = ?";
-                PreparedStatement pst = conn.prepareStatement(query);
-                pst.setInt(1, item.getId());
-                pst.executeUpdate();
-                pst.close();
-                conn.close();
-                JOptionPane.showMessageDialog(this, "Successfully delete menu");
+    if (confirm == JOptionPane.YES_OPTION){
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javabeans", "root", "");
+
+            // Cek apakah menu masih dipakai di order_detail
+            String checkQuery = "SELECT COUNT(*) FROM order_detail WHERE id_menu = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
+            checkStmt.setInt(1, item.getId());
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                // Jika masih dipakai, tampilkan peringatan
+                JOptionPane.showMessageDialog(this, "Menu cannot be deleted because it is still used in an order.");
+            } else {
+                // Jika tidak dipakai, hapus
+                String deleteQuery = "DELETE FROM javabeans_menu WHERE id = ?";
+                PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+                deleteStmt.setInt(1, item.getId());
+                deleteStmt.executeUpdate();
+
+                deleteStmt.close();
+                JOptionPane.showMessageDialog(this, "Successfully delete menu.");
                 refreshCallback.run();
-            } catch (Exception e){
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Failed delete menu");
             }
-        } 
+
+            checkStmt.close();
+            rs.close();
+            conn.close();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed delete menu.");
+        }
+    } 
     }//GEN-LAST:event_btnDeleteActionPerformed
     
     /**

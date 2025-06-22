@@ -22,9 +22,9 @@ public class FormSignUp extends javax.swing.JFrame {
      * Mengatur komponen, placeholder dan aksi default.
      */
     public FormSignUp() {
-        initComponents();
-        setLocationRelativeTo(null);
-        setResizable(false);
+        initComponents(); // Inisialisasi komponen UI bawaan NetBeans
+        setLocationRelativeTo(null); // Menempatkan form di tengah layar
+        setResizable(false); // Mencegah form diubah ukurannya
         
     txtPasswordSign.setEchoChar((char) 0); // Supaya "Password" terlihat
     txtPasswordConfirm.setEchoChar((char) 0);
@@ -37,7 +37,7 @@ public class FormSignUp extends javax.swing.JFrame {
         }
     });
 
-    // Placeholder First Name
+    // Placeholder Nama Pengguna 
     txtNameSign.addFocusListener(new java.awt.event.FocusAdapter() {
         @Override
         public void focusGained(java.awt.event.FocusEvent evt) {
@@ -53,7 +53,7 @@ public class FormSignUp extends javax.swing.JFrame {
         }
     });
 
-    // Placeholder Last Name
+    // Placeholder Username
     txtUsernameSign.addFocusListener(new java.awt.event.FocusAdapter() {
         @Override
         public void focusGained(java.awt.event.FocusEvent evt) {
@@ -284,10 +284,11 @@ public class FormSignUp extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_cbxShowPasswordActionPerformed
-
+    
+// Event handler tombol "Login" diklik
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-        new FormLogin().setVisible(true);
-        this.dispose();
+        new FormLogin().setVisible(true);// Buka form login
+        this.dispose();// Tutup form signup
     }//GEN-LAST:event_jLabel3MouseClicked
     /**
      * Method ini dipanggil saat tombol "Create account" ditekan.
@@ -304,33 +305,43 @@ public class FormSignUp extends javax.swing.JFrame {
         String confirmPassword = new String(txtPasswordConfirm.getPassword());
         String passwordHash = passwordHash(password);
         
+        // Validasi input kosong atau masih default
         if (name.equals("Name") || userName.equals("User Name") || email.equals("Email") || password.equals("Password") || confirmPassword.equals("Confrim Password") ||
             name.isEmpty() || userName.isEmpty() || email.isEmpty() || password.isEmpty()|| confirmPassword.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Data can not be empty", "Warning", JOptionPane.ERROR_MESSAGE);
             return;
         }
+                
+        // Validasi nama hanya huruf
         if (!name.matches("[a-zA-Z\\s]+")) {
             JOptionPane.showMessageDialog(this, "Please enter a name Without numbers or symbols", "Warning", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        // Validasi format email
         if (!email.matches("^[A-Za-z0-9._%+-]+@(gmail\\.com|yahoo\\.com|outlook\\.com)$")) {
             JOptionPane.showMessageDialog(this, "Oops! Please use a Gmail, Yahoo, or Outlook emails are accepted", "Warning", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        //Validasi panjang password
         if(password.length() < 8){
             JOptionPane.showMessageDialog(this, "Password atleast 8 characters", "Warning", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
+        // Validasi kecocokan password dan konfirmasi
         if(!password.equals(confirmPassword)){
             JOptionPane.showMessageDialog(this, "Please make sure the password and confirmation match", "Warning", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
+        // Proses koneksi dan simpan data
         try {
             SignUp signUp = new SignUp(name, userName, email, passwordHash);
             Connection conn = Koneksi.getConnection();
 
+            // Cek apakah username sudah digunakan
             String cekUsername = "SELECT * FROM javabeans_akun WHERE username = ?";
             String cekEmail = "SELECT * FROM javabeans_akun WHERE email = ?";
 
@@ -341,6 +352,7 @@ public class FormSignUp extends javax.swing.JFrame {
             if (rsUserName.next()) {
                 JOptionPane.showMessageDialog(this, "Sorry, that username is already taken. Please choose another one", "Warning", JOptionPane.ERROR_MESSAGE);
             } else {
+                // Cek email jika username belum digunakan
                 PreparedStatement psEmail = conn.prepareStatement(cekEmail);
                 psEmail.setString(1, signUp.email);
                 ResultSet rsEmail = psEmail.executeQuery();
@@ -348,7 +360,7 @@ public class FormSignUp extends javax.swing.JFrame {
             if (rsEmail.next()) {
                 JOptionPane.showMessageDialog(this, "Email is already used", "Warning", JOptionPane.ERROR_MESSAGE);
             } else {
-                // Jika username dan email belum digunakan, insert akun baru
+                // Simpan data akun baru ke tabel
                 String insert = "INSERT INTO javabeans_akun (name_user, username, email, password_user) VALUES (?, ?, ?, ?)";
                 PreparedStatement psInsert = conn.prepareStatement(insert);
                 psInsert.setString(1, signUp.nameUser);
@@ -356,10 +368,10 @@ public class FormSignUp extends javax.swing.JFrame {
                 psInsert.setString(3, signUp.email);
                 psInsert.setString(4, signUp.passwordUser);
 
-                psInsert.executeUpdate();
+                psInsert.executeUpdate();// Eksekusi query
                 JOptionPane.showMessageDialog(this, "Your account has been successfully created", "Sign Up", JOptionPane.INFORMATION_MESSAGE);
                 
-                // Reset semua input
+                // Reset input ke default
                 txtNameSign.setText("Name");
                 txtUsernameSign.setText("User Name");
                 txtEmailSign.setText("Email");

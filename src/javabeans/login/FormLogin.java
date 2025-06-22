@@ -36,17 +36,19 @@ public class FormLogin extends javax.swing.JFrame {
      * Menginisialisasi komponen GUI dan menempatkan form di tengah layar.
      */
     public FormLogin() {
-        initComponents();
-        setLocationRelativeTo(null);
-        setResizable(false);
-        
+        initComponents(); // Inisialisasi komponen UI bawaan NetBeans
+        setLocationRelativeTo(null); // Menempatkan form di tengah layar
+        setResizable(false); // Mencegah form diubah ukurannya
+    
+    // Atur fokus awal ke panel utama
     this.addWindowFocusListener(new java.awt.event.WindowAdapter() {
         @Override
         public void windowGainedFocus(java.awt.event.WindowEvent e) {
             jPanel1.requestFocusInWindow(); // Panel atau komponen lain sebagai fokus awal
         }
     });
-        
+    
+    // Awalnya password tidak ditampilkan sebagai ●
     txtPasswordLog.setEchoChar((char) 0); // Biar tulisan Password terlihat
 
     // Placeholder behavior untuk jTextField1 (Username)
@@ -238,12 +240,14 @@ public class FormLogin extends javax.swing.JFrame {
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         String username = txtUsernameLog.getText();
         String password = new String(txtPasswordLog.getPassword());
-        String passwordHash = passwordHash(password);
+        String passwordHash = passwordHash(password); // Hash password untuk dicocokkan dengan database
         
+        // Validasi kosong
         if (username.equals("Username") || password.equals("Password") || username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Username and password can not be empty", "Warning", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        // Validasi panjang password
         if(password.length() < 8){
             JOptionPane.showMessageDialog(this, "Password atleast 8 characters", "Warning", JOptionPane.ERROR_MESSAGE);
             return;
@@ -252,7 +256,8 @@ public class FormLogin extends javax.swing.JFrame {
         Login login = new Login(username, passwordHash);
         
         try {
-            Connection conn = Koneksi.getConnection();
+           // Koneksi ke database
+           Connection conn = Koneksi.getConnection();
            String query = "SELECT * FROM javabeans_akun WHERE username=? AND password_user=?";
            PreparedStatement preparedStat = conn.prepareStatement(query);
            preparedStat.setString(1, login.username);
@@ -260,12 +265,14 @@ public class FormLogin extends javax.swing.JFrame {
            ResultSet resultSet = preparedStat.executeQuery();   
            
         if (resultSet.next()) {
+            // Login berhasil, ambil ID dan buka HomePage
             int idUser = resultSet.getInt("id_user");
             JOptionPane.showMessageDialog(this, "Hello, " + login.username, "Message", JOptionPane.INFORMATION_MESSAGE);
             HomePageFrame home = new HomePageFrame(idUser);
             home.setVisible(true);
             this.dispose();
         } else {
+            // Gagal login
             JOptionPane.showMessageDialog(this, "Username or Password wrong", "Warning", JOptionPane.ERROR_MESSAGE);
         }
         } catch (SQLException e) {
