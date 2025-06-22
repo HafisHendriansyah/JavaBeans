@@ -1,0 +1,434 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package javabeans.seeallmenu;
+
+import javabeans.homepage.HomePageFrame;
+import java.awt.GridLayout;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javabeans.model.MenuItem;
+import javabeans.model.MenuItemImpl;
+
+/**
+ * Kelas MenuItemsFrame
+ * JFrame ini digunakan untuk menampilkan seluruh daftar menu dari database dalam bentuk kartu (MenuCardAdmin).
+ * Pengguna dapat melihat semua menu atau memfilter berdasarkan kategori (Coffee, Non-Coffee, Snack, Food).
+
+ * Setiap menu ditampilkan sebagai kartu yang memuat informasi nama, harga, kategori, dan gambar.
+ * Admin dapat menekan tombol Edit atau Delete di tiap kartu menu untuk mengubah atau menghapus data.
+ *
+ * Tombol kategori akan memanggil filterMenuByCategory().
+ * Tombol "All" akan memanggil displayMenu().
+ * Tombol "Back" akan kembali ke HomePageFrame.
+ *
+ * @author HAFIS HENDRIANSYAH
+ */
+public class MenuItemsFrame extends javax.swing.JFrame {
+    private int idUserLogin;
+    
+    /**     
+     * Konstruktor MenuItemsFrame
+     * 
+     * @param idUser ID pengguna yang login, diteruskan ke halaman HomePage saat kembali
+     */
+    public MenuItemsFrame(int idUser) {
+        initComponents();
+        this.idUserLogin = idUser;
+        displayMenu();
+    }
+    
+    /**
+     * Menampilkan seluruh menu dari database tanpa filter ke panel jPanel4.
+     * Menggunakan objek MenuItemImpl dan MenuCardAdmin.
+     */
+    private void displayMenu(){
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javabeans", "root", "");
+            String query = "SELECT id, nama_menu, category_menu, harga_menu, gambar_menu FROM javabeans_menu";
+            PreparedStatement pst = conn.prepareStatement(query);
+            ResultSet rs = pst.executeQuery(query);
+            
+            jPanel4.removeAll();
+            jPanel4.setLayout(new GridLayout(0, 2, 20, 20));
+            jScrollPane1.setViewportView(jPanel4);
+            
+            while (rs.next()){
+                int id = rs.getInt("id");
+                String nama = rs.getString("nama_menu");
+                String kategori = rs.getString("category_menu");
+                int harga = rs.getInt("harga_menu");
+                byte[] imgBytes = rs.getBytes("gambar_menu");
+                
+                
+                MenuItem item = new MenuItemImpl(id, nama, kategori, harga, imgBytes);
+                
+                MenuCardAdmin card = new MenuCardAdmin(item, () -> displayMenu());
+                
+                jPanel4.revalidate();
+                jPanel4.repaint();
+                
+                jPanel4.add(card);
+            }
+ 
+            rs.close();
+            pst.close();
+            conn.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Memfilter menu berdasarkan kategori dan menampilkan hasilnya ke jPanel4.
+     * Digunakan oleh tombol kategori seperti Coffee, Non-Coffee, Snack, dan Food.
+     *
+     * @param kategoriFilter kategori yang ingin ditampilkan
+     */
+    private void filterMenuByCategory(String kategoriFilter){
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javabeans", "root", "");
+            String query = "SELECT id, nama_menu, category_menu, harga_menu, gambar_menu FROM javabeans_menu WHERE category_menu = ? ";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setString(1, kategoriFilter);
+            ResultSet rs = pst.executeQuery();
+            
+            jPanel4.removeAll();
+            jPanel4.setLayout(new GridLayout(0, 2, 20, 20));
+            
+            while (rs.next()){
+                int id = rs.getInt("id");
+                String nama = rs.getString("nama_menu");
+                String kategori = rs.getString("category_menu");
+                int harga = rs.getInt("harga_menu");
+                byte[] imgBytes = rs.getBytes("gambar_menu");
+                
+                MenuItem item = new MenuItemImpl(id, nama, kategori, harga, imgBytes);
+                MenuCardAdmin card = new MenuCardAdmin(item, () -> displayMenu());
+                
+                jPanel4.add(card);
+            }
+            
+            rs.close();
+            pst.close();
+            conn.close();
+            
+            jPanel4.revalidate();
+            jPanel4.repaint();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        latar = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        btn_all = new javax.swing.JButton();
+        btn_coffee = new javax.swing.JButton();
+        btn_nonCoffee = new javax.swing.JButton();
+        btn_snack = new javax.swing.JButton();
+        btn_food = new javax.swing.JButton();
+        btnBack = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel4 = new javax.swing.JPanel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("See All Menu");
+        setResizable(false);
+
+        latar.setBackground(new java.awt.Color(153, 102, 0));
+        latar.setLayout(new java.awt.BorderLayout());
+
+        jPanel2.setBackground(new java.awt.Color(78, 52, 46));
+
+        btn_all.setText("All");
+        btn_all.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_allActionPerformed(evt);
+            }
+        });
+
+        btn_coffee.setText("Coffee");
+        btn_coffee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_coffeeActionPerformed(evt);
+            }
+        });
+
+        btn_nonCoffee.setText("Non-Coffee");
+        btn_nonCoffee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_nonCoffeeActionPerformed(evt);
+            }
+        });
+
+        btn_snack.setText("Snack");
+        btn_snack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_snackActionPerformed(evt);
+            }
+        });
+
+        btn_food.setText("Food");
+        btn_food.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_foodActionPerformed(evt);
+            }
+        });
+
+        btnBack.setText("Back");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 30)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 243, 224));
+        jLabel1.setText("All Menu");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(99, 99, 99)
+                        .addComponent(btn_all)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_coffee)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_nonCoffee)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_snack))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnBack)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)))
+                .addGap(18, 18, 18)
+                .addComponent(btn_food)
+                .addContainerGap(248, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnBack)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_all)
+                    .addComponent(btn_coffee)
+                    .addComponent(btn_nonCoffee)
+                    .addComponent(btn_snack)
+                    .addComponent(btn_food))
+                .addContainerGap())
+        );
+
+        latar.add(jPanel2, java.awt.BorderLayout.PAGE_START);
+
+        jPanel3.setBackground(new java.awt.Color(78, 52, 46));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 500, Short.MAX_VALUE)
+        );
+
+        latar.add(jPanel3, java.awt.BorderLayout.LINE_END);
+
+        jPanel5.setBackground(new java.awt.Color(78, 52, 46));
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 500, Short.MAX_VALUE)
+        );
+
+        latar.add(jPanel5, java.awt.BorderLayout.LINE_START);
+
+        jPanel1.setBackground(new java.awt.Color(153, 153, 153));
+
+        jPanel4.setBackground(new java.awt.Color(255, 243, 224));
+        jPanel4.setLayout(new java.awt.GridBagLayout());
+        jScrollPane1.setViewportView(jPanel4);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+        );
+
+        latar.add(jPanel1, java.awt.BorderLayout.CENTER);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(latar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(latar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+    
+    /**
+     * Event handler untuk tombol All.
+     * Akan menampilkan semua menu tanpa filter.
+     *
+     * @param evt event klik tombol
+     */
+    private void btn_allActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_allActionPerformed
+        // TODO add your handling code here:
+        displayMenu();
+    }//GEN-LAST:event_btn_allActionPerformed
+    
+    /**
+     * Event handler untuk tombol kategori Coffee.
+     * Akan menampilkan hanya menu dengan kategori "Coffee".
+     *
+     * @param evt event klik tombol
+     */
+    private void btn_coffeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_coffeeActionPerformed
+        // TODO add your handling code here:
+        filterMenuByCategory("Coffee");
+    }//GEN-LAST:event_btn_coffeeActionPerformed
+    
+    /**
+     * Event handler untuk tombol kategori Non-Coffee.
+     * Akan menampilkan hanya menu dengan kategori "Non-Coffee".
+     *
+     * @param evt event klik tombol
+     */
+    private void btn_nonCoffeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nonCoffeeActionPerformed
+        // TODO add your handling code here:
+        filterMenuByCategory("Non-Coffee");
+    }//GEN-LAST:event_btn_nonCoffeeActionPerformed
+    
+    /**
+     * Event handler untuk tombol kategori Snack.
+     * Akan menampilkan hanya menu dengan kategori "Snack".
+     *
+     * @param evt event klik tombol
+     */
+    private void btn_snackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_snackActionPerformed
+        // TODO add your handling code here:
+        filterMenuByCategory("Snack");
+    }//GEN-LAST:event_btn_snackActionPerformed
+    
+    /**
+     * Event handler untuk tombol kategori Food.
+     * Akan menampilkan hanya menu dengan kategori "Food".
+     *
+     * @param evt event klik tombol
+     */
+    private void btn_foodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_foodActionPerformed
+        // TODO add your handling code here:
+        filterMenuByCategory("Food");
+    }//GEN-LAST:event_btn_foodActionPerformed
+    
+    /**
+     * Event handler untuk tombol Back.
+     * Akan kembali ke HomePageFrame sesuai ID login.
+     *
+     * @param evt event klik tombol
+     */
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        // TODO add your handling code here:
+        new HomePageFrame(idUserLogin).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(MenuItemsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(MenuItemsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(MenuItemsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(MenuItemsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new MenuItemsFrame().setVisible(true);
+//            }
+//        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btn_all;
+    private javax.swing.JButton btn_coffee;
+    private javax.swing.JButton btn_food;
+    private javax.swing.JButton btn_nonCoffee;
+    private javax.swing.JButton btn_snack;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel latar;
+    // End of variables declaration//GEN-END:variables
+}
