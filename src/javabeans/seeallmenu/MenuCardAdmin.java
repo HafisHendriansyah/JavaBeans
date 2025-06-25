@@ -236,7 +236,7 @@ public class MenuCardAdmin extends javax.swing.JPanel {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Gagal membuka form edit: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Failed to open the edit form: " + ex.getMessage());
         }
     }//GEN-LAST:event_btnEditActionPerformed
 
